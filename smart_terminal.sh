@@ -111,7 +111,7 @@ function logs()
 	e|E)
 		echo
 		echo "Log: EIB/KNX:"
-		timeout 300s vbusmonitor1 local:/tmp/eib
+		timeout 300s vbusmonitor1 ip:127.0.0.1
 		;;
 	m|M)  
         echo 
@@ -221,11 +221,14 @@ mcache=`cat /proc/meminfo | egrep "^Cached" | awk '{ printf("%.0f",$2/1024) }'`
 mdirty=`cat /proc/meminfo | egrep "^Dirty" | awk '{ printf("%.0f",$2/1024) }'`
 echo "Memory: $mtot MB  Free: $mfree MB  Cached: $mcache MB  WriteCache: $mdirty MB"
 echo "--------------------------------------------------------------------------------------------------------------------------------"
+if [ $owdir ];then
 mastercount=`owdir /| grep -c /81`
 tempcount=`owdir /| grep -c /28`
 mscount=`owdir /| grep -c /26`
 buttoncount=`owdir /| grep -c /01`
+fi
 echo "1-Wire Busmaster: $mastercount Temperature: $tempcount Humidity/Multi: $mscount iButton/IO: $buttoncount"
+if [ $owdir ];then
 owdir /| grep /bus.| while read; 
               do
               bus=`owdir $REPLY| grep /81`
@@ -237,7 +240,10 @@ owdir /| grep /bus.| while read;
               #echo -n `basename $REPLY`
               echo -n -e "$bus Error/SearchError: $errors/$search_errors\tTemperature: $tempcount\tHumidity/MS: $mscount\tiButton/IO: $buttoncount"
               echo
-              done 
+          done
+else
+    echo "No owfs installed"
+fi
 echo "--------------------------------------------------------------------------------------------------------------------------------"
 eibdcmd=`ps -eo args | grep eibd | grep -v grep`
 eibdversion=`eibd -V`
