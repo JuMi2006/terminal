@@ -245,8 +245,8 @@ echo "eibd-Version: $eibdversion"
 echo "eibd-Prozess: $eibdcmd"
 echo "--------------------------------------------------------------------------------------------------------------------------------"
 #shpy_last=`cat /tmp/sh.startup`
-shpy_last=`ps -eo lstart,cmd,etime | grep smarthome.py | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
-shpy_uptime=`ps -eo lstart,cmd,etime | grep smarthome.py | grep -v grep | awk '{print $8}'`
+shpy_last=`ps -eo lstart,cmd,etime,command | grep "python3 /usr/local/smarthome/bin/smarthome.py --start" | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
+shpy_uptime=`ps -eo lstart,cmd,etime,command | grep "python3 /usr/local/smarthome/bin/smarthome.py --start" | grep -v grep | awk '{print $8}'`
 echo "smarthome.py last start: $shpy_last"
 echo "smarthome.py uptime: $shpy_uptime"
 echo "--------------------------------------------------------------------------------------------------------------------------------"
