@@ -174,8 +174,8 @@ function menu () {
     echo "(M)enu  (O)newire-List  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit"
     read -n 1 -t 60 KEYPRESS
     if [ "$?" = "1" ]; then
-    exit
-    echo
+        exit
+        echo
     fi
 
     case $KEYPRESS in
@@ -185,7 +185,7 @@ function menu () {
         l|L)  logs;;
         h|H)  help;;
         m|M)  listinfo;;
-        e|E)  ex;;
+        e|E|x|X)  ex;;
     esac
     listinfo
 }
