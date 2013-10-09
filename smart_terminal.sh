@@ -100,7 +100,7 @@ function logs() {
     case $CONFIRM in
         s|S)
             echo
-            echo "Log: smarthome.py:"
+            echo "Log: SmartHome.py:"
             timeout 300s tail -f /usr/smarthome/var/log/smarthome.log
             ;;
         c|C)
@@ -130,7 +130,7 @@ function restart_svc() {
     echo
     echo "Restarting services"
     echo "(E) Restarting eibd"
-    echo "(S) Restarting smarthome.py"
+    echo "(S) Restarting SmartHome.py"
     echo "(O) Restarting owserver"
     echo "Press Key to restart Service"
     echo "(M) Return to main menu"
@@ -143,7 +143,7 @@ function restart_svc() {
             ;;
         s|S)
             echo
-            echo "Restarting smarthome.py:"
+            echo "Restarting SmartHome.py:"
             /etc/init.d/smarthome.py restart
             ;;
         o|O)
@@ -239,14 +239,15 @@ function listinfo () {
     echo "--------------------------------------------------------------------------------------------------------------------------------"
     eibdcmd=`ps -eo args | grep eibd | grep -v grep`
     eibdversion=`eibd -V`
-    echo "eibd-Version: $eibdversion"
-    echo "eibd-Prozess: $eibdcmd"
+    echo "eibd version: $eibdversion"
+    echo "eibd process: $eibdcmd"
     echo "--------------------------------------------------------------------------------------------------------------------------------"
-    #shpy_last=`cat /tmp/sh.startup`
+    shpy_version=`smarthome.py -V | cut -d ' ' -f 2`
     shpy_last=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
     shpy_uptime=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $8}'`
-    echo "smarthome.py last start: $shpy_last"
-    echo "smarthome.py uptime: $shpy_uptime"
+    echo "SmartHome.py version: $shpy_version"
+    echo "SmartHome.py last start: $shpy_last"
+    echo "SmartHome.py uptime: $shpy_uptime"
     echo "--------------------------------------------------------------------------------------------------------------------------------"
     menu
 }
