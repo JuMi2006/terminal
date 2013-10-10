@@ -178,9 +178,9 @@ function ex () {
 function menu () {
     KEYPRESS=""
     if [ -n "$owdir" ]; then
-        echo "(M)enu  (O)newire-List  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit";
+        echo "(M)enu  (O)newire-List  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (Q)uit";
     else
-        echo "(M)enu  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit";
+        echo "(M)enu  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (Q)uit";
     fi
 
     read -n 1 -t 60 KEYPRESS
@@ -196,7 +196,7 @@ function menu () {
         l|L)  logs;;
         h|H)  help;;
         m|M)  listinfo;;
-        e|E|x|X)  ex;;
+        q|Q|x|X)  ex;;
     esac
     listinfo
 }
