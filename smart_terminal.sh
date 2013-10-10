@@ -2,6 +2,12 @@
 trap "exit 1" TERM
 export TOP_PID=$$
 
+shpy_version=`smarthome.py -V | cut -d ' ' -f 2`
+owdir=`which owdir 2> /dev/null`
+eibd=`which eibd 2> /dev/null`
+eibdversion=`eibd -V 2>/dev/null`
+
+
 function listow () {
     clear
     echo "1-Wire Details"
@@ -129,9 +135,9 @@ function restart_svc() {
     echo "$logo"
     echo
     echo "Restarting services"
-    echo "(E) Restarting eibd"
+    if [ -n "$eibd" ]; then echo "(E) Restarting eibd"; fi
     echo "(S) Restarting SmartHome.py"
-    echo "(O) Restarting owserver"
+    if [ -n "$owdir" ]; then echo "(O) Restarting owserver"; fi
     echo "Press Key to restart Service"
     echo "(M) Return to main menu"
     read -n 1 -t 60 CONFIRM  
@@ -171,7 +177,12 @@ function ex () {
 
 function menu () {
     KEYPRESS=""
-    echo "(M)enu  (O)newire-List  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit"
+    if [ -n "$owdir" ]; then
+        echo "(M)enu  (O)newire-List  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit";
+    else
+        echo "(M)enu  (R)estart-services  (L)ogs  (S)hutdown  (H)elp  (E)xit";
+    fi
+
     read -n 1 -t 60 KEYPRESS
     if [ "$?" = "1" ]; then
         exit
@@ -220,29 +231,31 @@ function listinfo () {
     mdirty=`cat /proc/meminfo | egrep "^Dirty" | awk '{ printf("%.0f",$2/1024) }'`
     echo "Memory: $mtot MB  Free: $mfree MB  Cached: $mcache MB  WriteCache: $mdirty MB"
     echo "--------------------------------------------------------------------------------------------------------------------------------"
-    mastercount=`owdir /| grep -c /81`
-    tempcount=`owdir /| grep -c /28`
-    mscount=`owdir /| grep -c /26`
-    buttoncount=`owdir /| grep -c /01`
-    echo "1-Wire Busmaster: $mastercount Temperature: $tempcount Humidity/Multi: $mscount iButton/IO: $buttoncount"
-    owdir /| grep /bus.| while read; do
-        bus=`owdir $REPLY| grep /81`
-        errors=`owread $REPLY/interface/statistics/errors | tr -d ' '`
-        search_errors=`owread $REPLY/interface/statistics/search_errors/error_pass_1 | tr -d ' '`
-        tempcount=`owdir $REPLY| grep -c /28`
-        mscount=`owdir $REPLY| grep -c /26`
-        buttoncount=`owdir $REPLY| grep -c /01 | tr -d ' '`
-        #echo -n `basename $REPLY`
-        echo -n -e "$bus Error/SearchError: $errors/$search_errors\tTemperature: $tempcount\tHumidity/MS: $mscount\tiButton/IO: $buttoncount"
-        echo
-    done
-    echo "--------------------------------------------------------------------------------------------------------------------------------"
-    eibdcmd=`ps -eo args | grep eibd | grep -v grep`
-    eibdversion=`eibd -V`
-    echo "eibd version: $eibdversion"
-    echo "eibd process: $eibdcmd"
-    echo "--------------------------------------------------------------------------------------------------------------------------------"
-    shpy_version=`smarthome.py -V | cut -d ' ' -f 2`
+    if [ -n "$owdir" ]; then
+        mastercount=`owdir /| grep -c /81`
+        tempcount=`owdir /| grep -c /28`
+        mscount=`owdir /| grep -c /26`
+        buttoncount=`owdir /| grep -c /01`
+        echo "1-Wire Busmaster: $mastercount Temperature: $tempcount Humidity/Multi: $mscount iButton/IO: $buttoncount"
+        owdir /| grep /bus.| while read; do
+            bus=`owdir $REPLY| grep /81`
+            errors=`owread $REPLY/interface/statistics/errors | tr -d ' '`
+            search_errors=`owread $REPLY/interface/statistics/search_errors/error_pass_1 | tr -d ' '`
+            tempcount=`owdir $REPLY| grep -c /28`
+            mscount=`owdir $REPLY| grep -c /26`
+            buttoncount=`owdir $REPLY| grep -c /01 | tr -d ' '`
+            #echo -n `basename $REPLY`
+            echo -n -e "$bus Error/SearchError: $errors/$search_errors\tTemperature: $tempcount\tHumidity/MS: $mscount\tiButton/IO: $buttoncount"
+            echo
+        done
+        echo "--------------------------------------------------------------------------------------------------------------------------------"
+    fi
+    if [ -n "$eibd" ]; then
+        eibdcmd=`ps -eo args | grep eibd | grep -v grep`
+        echo "eibd version: $eibdversion"
+        echo "eibd process: $eibdcmd"
+        echo "--------------------------------------------------------------------------------------------------------------------------------"
+    fi
     shpy_last=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
     shpy_uptime=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $8}'`
     echo "SmartHome.py version: $shpy_version"
