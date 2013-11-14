@@ -210,7 +210,7 @@ function listinfo () {
     fi
     touch /tmp/tty_inited
 
-    #Background Prozess in /etc/inittab
+    # Background Prozess in /etc/inittab
     # terminal8:2345:respawn:/usr/bin/tail -f /var/log/syslog >/dev/tty8
     # terminal9:2345:respawn:/usr/bin/vbusmonitor1time local:/tmp/eib >/dev/tty9
     # terminal10:2345:respawn:/usr/bin/tail -f /var/log/user.log >/dev/tty10
@@ -222,14 +222,14 @@ function listinfo () {
     UPTIME=`uptime`
     echo "Status: $UPTIME"
     echo "--------------------------------------------------------------------------------------------------------------------------------"
-    ifconfig | egrep "^[a-z]| +inet" | egrep -v "^lo|127\.0"
-    route -n | grep -m 1 "^0\." | awk '{print "Route:    "$1 " -> " $2}'
-    echo "--------------------------------------------------------------------------------------------------------------------------------"
     mtot=`cat /proc/meminfo | egrep "^MemTotal" | awk '{ printf("%.0f",$2/1024) }'`
     mfree=`cat /proc/meminfo | egrep "^MemFree" | awk '{ printf("%.0f",$2/1024) }'`
     mcache=`cat /proc/meminfo | egrep "^Cached" | awk '{ printf("%.0f",$2/1024) }'`
     mdirty=`cat /proc/meminfo | egrep "^Dirty" | awk '{ printf("%.0f",$2/1024) }'`
     echo "Memory: $mtot MB  Free: $mfree MB  Cached: $mcache MB  WriteCache: $mdirty MB"
+    echo "--------------------------------------------------------------------------------------------------------------------------------"
+    ifconfig | egrep "^[a-z]| +inet" | egrep -v "^lo|127\.0"
+    route -n | grep -m 1 "^0\." | awk '{print "Route:    "$1 " -> " $2}'
     echo "--------------------------------------------------------------------------------------------------------------------------------"
     if [ -n "$owdir" ]; then
         mastercount=`owdir /| grep -c /81`
