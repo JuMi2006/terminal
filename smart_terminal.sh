@@ -2,10 +2,10 @@
 trap "exit 1" TERM
 export TOP_PID=$$
 
-shpy_version=`smarthome.py -V | cut -d ' ' -f 2`
+shpy_version=`python3 /usr/local/smarthome/bin/smarthome.py -V | cut -d ' ' -f 2`
 owdir=`which owdir 2> /dev/null`
-eibd=`which eibd 2> /dev/null`
-eibdversion=`eibd -V 2>/dev/null`
+knxd=`which knxd 2> /dev/null`
+knxdversion=`knxd -V 2>/dev/null`
 
 
 function listow () {
@@ -99,7 +99,7 @@ function logs() {
     echo "View-Log for 5 Minutes"
     echo "(S) SmartHome.py    (5 minutes)"
     echo "(C) Syslog          (5 minutes - quit with "q")"
-    echo "(E) EIB/KNX Monitor (5 minutes)"
+    echo "(E) EIB/KNX Monitor (5 minutes) !!! NOT WORKING AT MOMENT !!!"
     echo "Press Key to view Logs"
     echo "(M) Return to main menu"
     read -n 1 -t 60 CONFIRM  
@@ -107,7 +107,7 @@ function logs() {
         s|S)
             echo
             echo "Log: SmartHome.py:"
-            timeout 300s tail -f /usr/smarthome/var/log/smarthome.log
+            timeout 300s tail -f /usr/local/smarthome/var/log/smarthome.log
             ;;
         c|C)
             echo
@@ -145,17 +145,17 @@ function restart_svc() {
         e|E)
             echo
             echo "Restarting eibd:"
-            /etc/init.d/eibd restart
+            service knxd restart
             ;;
         s|S)
             echo
             echo "Restarting SmartHome.py:"
-            /etc/init.d/smarthome.py restart
+            service smarthome restart
             ;;
         o|O)
             echo
             echo "Restarting owserver:"
-            /etc/init.d/owserver restart
+            service owserver restart
             ;;
         m|M)
             echo
@@ -250,14 +250,14 @@ function listinfo () {
         done
         echo "--------------------------------------------------------------------------------------------------------------------------------"
     fi
-    if [ -n "$eibd" ]; then
-        eibdcmd=`ps -eo args | grep eibd | grep -v grep`
-        echo "eibd version: $eibdversion"
-        echo "eibd process: $eibdcmd"
+    if [ -n "$knxd" ]; then
+        knxdcmd=`ps -eo args | grep knxd | grep -v grep`
+        echo "knxd version: $knxdversion"
+        echo "knxd process: $knxdcmd"
         echo "--------------------------------------------------------------------------------------------------------------------------------"
     fi
-    shpy_last=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
-    shpy_uptime=`ps -eo lstart,cmd,etime | grep /usr/smarthome/bin | grep -v grep | awk '{print $8}'`
+    shpy_last=`ps -eo lstart,cmd,etime | grep "/usr/bin/python3 /usr/local" | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
+    shpy_uptime=`ps -eo lstart,cmd,etime | grep "/usr/bin/python3 /usr/local" | grep -v grep | awk '{print $8}'`
     echo "SmartHome.py version: $shpy_version"
     echo "SmartHome.py last start: $shpy_last"
     echo "SmartHome.py uptime: $shpy_uptime"
