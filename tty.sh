@@ -239,14 +239,14 @@ owdir /| grep /bus.| while read;
               echo
               done 
 echo "--------------------------------------------------------------------------------------------------------------------------------"
-eibdcmd=`ps -eo args | grep eibd | grep -v grep`
-eibdversion=`eibd -V`
-echo "eibd-Version: $eibdversion"
-echo "eibd-Prozess: $eibdcmd"
+knxdcmd=`ps -eo args | grep knxd | grep -v grep`
+knxdversion=`knxd --version`
+echo "knxd-Version: $knxdversion"
+echo "knxd-Prozess: $knxdcmd"
 echo "--------------------------------------------------------------------------------------------------------------------------------"
 #shpy_last=`cat /tmp/sh.startup`
-shpy_last=`ps -eo lstart,cmd,etime,command | grep "python3 /usr/local/smarthome/bin/smarthome.py --start" | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
-shpy_uptime=`ps -eo lstart,cmd,etime,command | grep "python3 /usr/local/smarthome/bin/smarthome.py --start" | grep -v grep | awk '{print $8}'`
+shpy_last=`ps -eo lstart,cmd,etime,command | grep "/usr/bin/python3 /usr/local/smarthome/bin" | grep -v grep | awk '{print $1,$2,$3,$4,$5}'`
+shpy_uptime=`ps -eo lstart,cmd,etime,command | grep "/usr/bin/python3 /usr/local/smarthome/bin" | grep -v grep | awk '{print $8}'`
 echo "smarthome.py last start: $shpy_last"
 echo "smarthome.py uptime: $shpy_uptime"
 echo "--------------------------------------------------------------------------------------------------------------------------------"
